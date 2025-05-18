@@ -55,7 +55,7 @@ def main():
     try:
         params_path="params.yaml"
         data_path = "./data/processed/train_processed.csv"
-        model_name="model.pkl"
+        model_name="models/model.pkl"
         
         depth= load_params(params_path)
         train_data=load_data(data_path)
