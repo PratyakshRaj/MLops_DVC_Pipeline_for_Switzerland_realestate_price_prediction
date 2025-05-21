@@ -9,6 +9,9 @@ import pickle
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
 import json
+from dvclive import Live
+import yaml
+
 
 def load_data(file_path):
     try:
@@ -41,12 +44,22 @@ def load_model(filepath):
 
 def evaluation_model(model,x_test,y_test):
     try:
+        params=yaml.safe_load(open("params.yaml","r"))
+        test_size=params["data_collection"]["test_size"]
+        depth=params["model_building"]["depth"]
+        
         y_pred=model.predict(x_test)
 
 
         r2_score_=r2_score(10**y_test,10**y_pred)
         root_mse=((mean_squared_error(10**y_test,10**y_pred))**0.5)
-
+        
+        with Live(save_dvc_exp=True) as lv:
+            lv.log_metric("r2_score",r2_score_)
+            lv.log_metric("mean_squared_error",root_mse)
+            lv.log_param("test_size",test_size)
+            lv.log_param("depth",depth)
+        
         metrics_dict={
             "r2_score":r2_score_,
             "root_mean_square_error":root_mse
